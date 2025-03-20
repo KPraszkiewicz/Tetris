@@ -4,16 +4,15 @@ namespace UI
 {
     public class MainUi : MonoBehaviour
     {
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
+
+        public void OnStartClick()
         {
-        
+            StartNewGame();
         }
 
-        // Update is called once per frame
-        void Update()
+        public void StartNewGame()
         {
-        
+            gameObject.SetActive(false);
         }
     }
 }

@@ -6,20 +6,15 @@ namespace Logic
 {
     public class Brick : MonoBehaviour
     {
-        public int Width = 10;
-        public int Height = 10;
-        public float CellSize = 10f;
 
         public Action<Brick> OnStopped;
 
         private int[,] table;
 
-        void Start()
+        public void StartMoving(float speed)
         {
             Rigidbody2D rigidbody2d = GetComponent<Rigidbody2D>();
-            rigidbody2d.linearVelocity = Vector2.down;
-
-
+            rigidbody2d.linearVelocity = Vector2.down * speed;
         }
         private void OnCollisionEnter2D(Collision2D collision)
         {

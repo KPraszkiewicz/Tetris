@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 6419318582523259004}
   - component: {fileID: 6624648506061128395}
   - component: {fileID: 7482322773446863459}
-  m_Layer: 0
-  m_Name: Brick
+  m_Layer: 12
+  m_Name: Brick4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 2617387721632625906}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -3, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -63,7 +63,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &7482322773446863459
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,9 +76,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7c676995d2ae7e46984f219130d29b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Width: 10
-  Height: 10
-  CellSize: 10
 --- !u!1 &3095495118980725681
 GameObject:
   m_ObjectHideFlags: 0
@@ -90,7 +87,7 @@ GameObject:
   - component: {fileID: 7173887787141311387}
   - component: {fileID: 8837657557094242031}
   - component: {fileID: 8942467232458253434}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Square (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -224,7 +221,7 @@ GameObject:
   - component: {fileID: 3806510085760163669}
   - component: {fileID: 6854262932248108038}
   - component: {fileID: 7366965984077563042}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Square (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -358,7 +355,7 @@ GameObject:
   - component: {fileID: 6827696038654760435}
   - component: {fileID: 9053955130862167721}
   - component: {fileID: 7174052498817150835}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -374,7 +371,7 @@ Transform:
   m_GameObject: {fileID: 5845347514646929517}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -492,7 +489,7 @@ GameObject:
   - component: {fileID: 77626585973914915}
   - component: {fileID: 2045552513545500101}
   - component: {fileID: 4900578487171499885}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Square (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

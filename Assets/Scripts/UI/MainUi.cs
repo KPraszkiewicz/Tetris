@@ -9,7 +9,8 @@ namespace UI
     {
         PlayersInput _playersInput;
         Main mainLogic;
-        public GameObject gui;
+        [SerializeField] GameObject gui;
+        [SerializeField] GameObject MainMenu;
 
         //public event Action<InputAction.CallbackContext> OnP1Move;
         //public event Action<InputAction.CallbackContext> OnP1Rotate;
@@ -18,41 +19,82 @@ namespace UI
 
         public void StartNewGame()
         {
-            mainLogic = Main.Instance;
             
+
+
+
+            MainMenu.SetActive(false);
+            gui.SetActive(true);
+            mainLogic.StartGame();
+
+
+        }
+
+        public void resetGame()
+        {
+            //gui.reset();
+            gui.SetActive(false);
+            MainMenu.SetActive(true);
+        }    
+
+        private void Awake()
+        {
+            _playersInput = new PlayersInput();
+            mainLogic = Main.Instance;
+
             if (mainLogic == null)
             {
                 Debug.LogError("MainLogic is null");
                 return;
             }
 
-            gameObject.SetActive(false);
-            gui.SetActive(true);
-            mainLogic.StartGame();
+            mainLogic.OnGameEnded += resetGame;
         }
 
-        private void Awake()
-        {
-            _playersInput = new PlayersInput();
 
-        }
 
         private void OnEnable()
         {
             _playersInput.Enable();
 
             _playersInput.Player1.Move.performed += OnP1Move;
+            _playersInput.Player1.Rotate.performed += OnP1Rotate;
+
+            _playersInput.Player2.Move.performed += OnP2Move;
+            _playersInput.Player2.Rotate.performed += OnP2Rotate;
         }
 
         private void OnDisable()
         {
             _playersInput.Disable();
+
+            _playersInput.Player1.Move.performed -= OnP1Move;
+            _playersInput.Player1.Rotate.performed -= OnP1Rotate;
+
+            _playersInput.Player2.Move.performed -= OnP2Move;
+            _playersInput.Player2.Rotate.performed -= OnP2Rotate;
         }
 
         void OnP1Move(InputAction.CallbackContext context)
         {
-           
+            int direction = (int)context.ReadValue<float>();
+            mainLogic.OnP1Move(direction);
+        }
+        void OnP1Rotate(InputAction.CallbackContext context)
+        {
+            int direction = (int)context.ReadValue<float>();
+            mainLogic.OnP1Rotate(direction);
+        }
+        void OnP2Move(InputAction.CallbackContext context)
+        {
+            int direction = (int)context.ReadValue<float>();
+            mainLogic.OnP2Move(direction);
         }
 
+        void OnP2Rotate(InputAction.CallbackContext context)
+        {
+            int direction = (int)context.ReadValue<float>();
+            mainLogic.OnP2Rotate(direction);
+        }
     }
 }

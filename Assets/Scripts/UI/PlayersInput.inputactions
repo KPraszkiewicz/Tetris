@@ -15,7 +15,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "RotateLeft",
+                    "name": "Rotate",
                     "type": "Value",
                     "id": "8f81c810-2fb0-4d8f-b75e-42adf8b3dc9a",
                     "expectedControlType": "Axis",
@@ -65,7 +65,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "RotateLeft",
+                    "action": "Rotate",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -76,7 +76,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "RotateLeft",
+                    "action": "Rotate",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -87,7 +87,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "RotateLeft",
+                    "action": "Rotate",
                     "isComposite": false,
                     "isPartOfComposite": true
                 }
@@ -95,89 +95,93 @@
         },
         {
             "name": "Player 2",
-            "id": "970985de-841f-49ab-bb83-fc7246c6d691",
+            "id": "06b7f7a5-c31d-466b-a053-9c13e998b88d",
             "actions": [
                 {
-                    "name": "MoveLeft",
-                    "type": "Button",
-                    "id": "ac07016f-9dd9-4c07-bae8-9bbd6204c6b0",
-                    "expectedControlType": "",
+                    "name": "Move",
+                    "type": "Value",
+                    "id": "d0fd575a-867e-424e-90f7-d691d54aeb6e",
+                    "expectedControlType": "Axis",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
-                    "name": "MoveRight",
-                    "type": "Button",
-                    "id": "e5dc9912-5b9d-47dd-a431-0b784239067c",
-                    "expectedControlType": "",
+                    "name": "Rotate",
+                    "type": "Value",
+                    "id": "bd322f2e-c444-41ea-8f2d-86c78d3097f9",
+                    "expectedControlType": "Axis",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "RotateLeft",
-                    "type": "Button",
-                    "id": "d30c804a-f7a9-4a3f-9cee-d1cb37663b43",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "RotateRight",
-                    "type": "Button",
-                    "id": "2d5238c9-3914-41ac-9e3d-b783a9e54db3",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
                 {
-                    "name": "",
-                    "id": "d188fab7-9ce6-4960-a47a-6ad9361ed3f5",
+                    "name": "1D Axis",
+                    "id": "10b950de-6ab3-42eb-901a-f901aa1675cd",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "713283bd-6239-4c94-ab37-6c01c5b5764d",
                     "path": "<Keyboard>/leftArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "MoveLeft",
+                    "action": "Move",
                     "isComposite": false,
-                    "isPartOfComposite": false
+                    "isPartOfComposite": true
                 },
                 {
-                    "name": "",
-                    "id": "58a4b82d-ec7b-42e0-aba8-522f9492c7d7",
+                    "name": "positive",
+                    "id": "cfdc69fe-4eb9-4ec0-aa0e-14274e7f7682",
                     "path": "<Keyboard>/rightArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "MoveRight",
+                    "action": "Move",
                     "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "1D Axis",
+                    "id": "f4d740b5-55d1-47e6-ba58-65b8ab35a0bb",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Rotate",
+                    "isComposite": true,
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "40672d4a-3e60-48ed-a067-21640e71c192",
+                    "name": "negative",
+                    "id": "1276651e-3b48-4a49-a9e4-7c7521c71e9c",
                     "path": "<Keyboard>/delete",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "RotateLeft",
+                    "action": "Rotate",
                     "isComposite": false,
-                    "isPartOfComposite": false
+                    "isPartOfComposite": true
                 },
                 {
-                    "name": "",
-                    "id": "1696fb5d-71c6-407c-a0cc-b28a790883ed",
+                    "name": "positive",
+                    "id": "672d5081-4fc7-452d-910f-b4284a03d10d",
                     "path": "<Keyboard>/pageDown",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "RotateRight",
+                    "action": "Rotate",
                     "isComposite": false,
-                    "isPartOfComposite": false
+                    "isPartOfComposite": true
                 }
             ]
         }

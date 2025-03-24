@@ -18,6 +18,11 @@ namespace Logic
         }
         private void OnCollisionEnter2D(Collision2D collision)
         {
+            if (collision.gameObject.layer == 10)
+            {
+                // TODO: Fix tunneling
+                return;
+            }
             Debug.Log("kolizja");
             OnStopped?.Invoke(this);
         }

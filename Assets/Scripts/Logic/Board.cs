@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.SceneManagement;
@@ -14,7 +15,7 @@ namespace Logic
 
         public Brick[] BrickVariats;
 
-        public Brick brick;
+        public GameObject brick;
         public Brick NextBrick;
         public int Score = 0;
 
@@ -39,6 +40,35 @@ namespace Logic
         private void Start()
         {
             InitTable();
+
+            // pseudo unit tests
+
+            table[0, 0] = 1;
+            table[0, 1] = 1;
+            table[0, 2] = 1;
+            table[0, 3] = 1;
+            table[0, 4] = 1;
+            table[0, 5] = 1;
+            table[0, 6] = 1;
+            table[0, 7] = 1;
+            table[0, 8] = 1;
+            table[0, 9] = 1;
+
+            table[1, 4] = 1;
+            table[1, 5] = 1;
+            table[1, 6] = 1;
+            table[1, 7] = 1;
+
+            for (int i = 0; i < 10; i++)
+            {
+                table[i, 0] = 1;
+            }
+            for (int i = 0; i < 10; i++)
+            {
+                table[i, 1] = 1;
+            }
+            CheckLines();
+
             UpdateCells();
         }
 
@@ -57,7 +87,7 @@ namespace Logic
                     obj.transform.localPosition = GetPositionFromIndex(i, j);
                 }
             }
-            SpawnPoint.transform.localPosition = new Vector3(Width / 2, Height, -1);
+            SpawnPoint.transform.localPosition = new Vector3(Width / 2 + 0.5f, Height, -1);
         }
         public static Vector3 RoundPosition(Vector3 position)
         {
@@ -109,6 +139,7 @@ namespace Logic
             newBrick.OnStopped += PlaceBrick;
             newBrick.transform.SetParent(transform);
             newBrick.StartMoving(BrickSpeed);
+            brick = newBrick.gameObject;
 
             return brickVariant;
         }
@@ -126,6 +157,7 @@ namespace Logic
             for (int i = 0; i < Width; i++)
             {
                 table[i, to] = table[i, from];
+                table[i, from] = 0;
             }
         }
 
@@ -143,7 +175,6 @@ namespace Logic
                         break;
                     }
                 }
-
                 if (product == 1)
                 {
                     deletedLines += 1;
@@ -152,14 +183,19 @@ namespace Logic
                 {
                     if (j + deletedLines < Height)
                     {
-                        ReplaceLine(j, j + deletedLines);
+                        ReplaceLine(j + deletedLines, j);
                     }
                     else
                     {
                         DeleteLine(j);
                     }
                 }
+                if (product == 1)
+                {
+                    j -= 1;
+                }
             }
+
             if (deletedLines > 0)
             {
                 UpdateCells();
@@ -177,7 +213,6 @@ namespace Logic
             {
                 Transform square = brick.transform.GetChild(i);
                 Vector2Int index = GetIndexFromPosition(brick.transform.localPosition + square.localPosition); // <- do zmiany, gloabal position jest nieodpowiednie TODO
-                Debug.Log(index);
                 if(index.y >= Height)
                 {
                     OnPlayerLose?.Invoke(this, EventArgs.Empty);
@@ -191,16 +226,43 @@ namespace Logic
                 }
             }
 
+            CheckLines();
             UpdateCells();
-            Destroy(brick);
+            brick.OnStopped -= PlaceBrick;
+            Destroy(brick.gameObject);
 
-            EventArgsBrickPlaced args =  new EventArgsBrickPlaced();
-            args.Scores = Score - scoreBefore;
-            args.NextBrick = SpawnBrick();  
+            EventArgsBrickPlaced args = new()
+            {
+                Scores = Score - scoreBefore,
+                NextBrick = SpawnBrick()
+            };
+
             OnBrickPlaced?.Invoke(this, args);
 
         }
 
-        
+        // controls
+        public bool MoveBrick(int direction)
+        {
+
+            if(brick)
+            {
+                brick.GetComponent<Rigidbody2D>().position += new Vector2(direction * CellSize, 0);
+                return true;
+            }
+            return false;
+        }
+
+        public bool RotateBrick(int direction)
+        {
+
+            if (brick)
+            {
+                brick.GetComponent<Rigidbody2D>().rotation += 90*direction;
+                return true;
+            }
+            return false;
+        }
+
     }
 }

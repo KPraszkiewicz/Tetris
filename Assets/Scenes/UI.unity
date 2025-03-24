@@ -418,6 +418,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gui: {fileID: 947982295}
+  MainMenu: {fileID: 1739414383}
 --- !u!4 &834703183
 Transform:
   m_ObjectHideFlags: 0

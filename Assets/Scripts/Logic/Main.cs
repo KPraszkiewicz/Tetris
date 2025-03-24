@@ -14,14 +14,57 @@ namespace Logic
             public int Value;
         }
 
-        public event EventHandler OnGameEnded;
+        public event Action OnGameEnded;
         public event EventHandler<EventArgsPlayerData> OnScoreUpdated;
         public event EventHandler<EventArgsPlayerData> OnNewNextBrick;
 
+        public void Start()
+        {
+            Player1Board.OnPlayerLose += PlayerLose;
+        }
+
+    
         public void StartGame()
         {
+
             Player1Board.SpawnBrick();
         }
+
+        public void OnP1Move(int direction)
+        {
+            Player1Board.MoveBrick(direction);
+        }
+
+        public void OnP1Rotate(int direction)
+        {
+            Player1Board.RotateBrick(direction);
+        }
+
+        public void OnP2Move(int direction)
+        {
+            Player2Board.MoveBrick(direction);
+        }
+
+        public void OnP2Rotate(int direction)
+        {
+            Player2Board.RotateBrick(direction);
+        }
+
+        void PlayerLose(object sender, EventArgs _args)
+        {
+            OnGameEnded?.Invoke();
+        }
+
+
+
+
+
+
+
+
+
+
+
 
 
         ///////////////////////////////////////////////
@@ -44,5 +87,8 @@ namespace Logic
 
             DontDestroyOnLoad(this.gameObject);
         }
+
+
+
     }
 }

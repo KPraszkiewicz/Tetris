@@ -9,7 +9,7 @@ namespace UI
     {
         PlayersInput _playersInput;
         Main mainLogic;
-        [SerializeField] GameObject gui;
+        [SerializeField] GUI gui;
         [SerializeField] GameObject MainMenu;
 
         //public event Action<InputAction.CallbackContext> OnP1Move;
@@ -19,21 +19,16 @@ namespace UI
 
         public void StartNewGame()
         {
-            
-
-
-
             MainMenu.SetActive(false);
-            gui.SetActive(true);
+            gui.gameObject.SetActive(true);
             mainLogic.StartGame();
-
 
         }
 
-        public void resetGame()
+        public void ResetGame()
         {
             //gui.reset();
-            gui.SetActive(false);
+            gui.gameObject.SetActive(false);
             MainMenu.SetActive(true);
         }    
 
@@ -48,10 +43,14 @@ namespace UI
                 return;
             }
 
-            mainLogic.OnGameEnded += resetGame;
+            mainLogic.OnGameEnded += ResetGame;
+            mainLogic.OnScoreUpdated += MainLogic_OnScoreUpdated;
         }
 
-
+        private void MainLogic_OnScoreUpdated(object sender, Main.EventArgsPlayerData e)
+        {
+            gui.UpdateScore(e.PlayerId, e.Value);
+        }
 
         private void OnEnable()
         {

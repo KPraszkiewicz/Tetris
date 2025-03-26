@@ -1,4 +1,8 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Codice.Client.BaseCommands.BranchExplorer;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
@@ -15,7 +19,7 @@ namespace Logic
 
         public Brick[] BrickVariats;
 
-        public GameObject brick;
+        public Brick brick;
         public Brick NextBrick;
         public int Score = 0;
 
@@ -139,7 +143,7 @@ namespace Logic
             newBrick.OnStopped += PlaceBrick;
             newBrick.transform.SetParent(transform);
             newBrick.StartMoving(BrickSpeed);
-            brick = newBrick.gameObject;
+            brick = newBrick;
 
             return brickVariant;
         }
@@ -161,40 +165,70 @@ namespace Logic
             }
         }
 
+        public bool LineIsEmpty(int index)
+        {
+            if (index >= Height)
+            {
+                return true;
+            }
+            for (int i = 0; i < Width; i++)
+            {
+                if (table[i, index] == 1)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public void CheckLines()
         {
             int deletedLines = 0;
+            Queue<int> fullLines = new();
+
             for (int j = 0; j < Height; j++)
             {
-                int product = 1;
+                bool isFullLine = true;
                 for (int i = 0; i < Width; i++)
                 {
                     if (table[i, j] == 0)
                     {
-                        product = 0;
+                        isFullLine = false;
                         break;
                     }
                 }
-                if (product == 1)
+                if (isFullLine)
+                {
+                    fullLines.Enqueue(j);
+                    DeleteLine(j);
+                }
+            }
+            // TODOL wait 100 ms
+
+            for (int j = 0; j < Height; j++)
+            {
+                int fromLine = deletedLines + j;
+
+                while (fullLines.Count > 0 && fullLines.Peek() <= fromLine)
                 {
                     deletedLines += 1;
+                    fromLine += 1;
+                    fullLines.Dequeue();
                 }
+
                 if (deletedLines > 0)
                 {
-                    if (j + deletedLines < Height)
-                    {
-                        ReplaceLine(j + deletedLines, j);
-                    }
-                    else
+                    if (fromLine >= Height)
                     {
                         DeleteLine(j);
                     }
-                }
-                if (product == 1)
-                {
-                    j -= 1;
+                    else
+                    {
+                        ReplaceLine(deletedLines + j, j);
+                    }
                 }
             }
+
 
             if (deletedLines > 0)
             {
@@ -203,17 +237,49 @@ namespace Logic
             }
         }
 
-        public void PlaceBrick(Brick brick)
+        public void PlaceBrick()
         {
             int scoreBefore = Score;
+            bool canBePlaced = false;
 
-            brick.gameObject.SetActive(false);
-            Debug.Log(brick.transform.childCount);
-            for (int i = 0; i < brick.transform.childCount; i++)
+            Vector2Int[] indexes = brickToIndexes(brick);
+
+            int minHeight = Height;
+            int minX = Width;
+            int maxX = -1;
+
+            foreach (var index in indexes)
+            { 
+                if (minX > index.x) minX = index.x;
+                if (maxX < index.x) maxX = index.x;
+                if (minHeight > index.y) minHeight = index.y;
+
+                if (index.y < Height && table[index.x, index.y] == 1)
+                {
+                    return;
+                }
+            }
+
+            if (minHeight > 0)
             {
-                Transform square = brick.transform.GetChild(i);
-                Vector2Int index = GetIndexFromPosition(brick.transform.localPosition + square.localPosition); // <- do zmiany, gloabal position jest nieodpowiednie TODO
-                if(index.y >= Height)
+                for (int i = minX; i <= maxX; i++)
+                {
+                    if (table[i, minHeight - 1] == 1)
+                    {
+                        canBePlaced = true;
+                        break;
+                    }
+                }
+
+                if (!canBePlaced)
+                {
+                    return;
+                }
+            }
+
+            foreach (var index  in indexes)
+            {
+                if (index.y >= Height)
                 {
                     OnPlayerLose?.Invoke(this, EventArgs.Empty);
                     gameRunning = false;
@@ -228,6 +294,7 @@ namespace Logic
 
             CheckLines();
             UpdateCells();
+            brick.gameObject.SetActive(false);
             brick.OnStopped -= PlaceBrick;
             Destroy(brick.gameObject);
 
@@ -241,12 +308,42 @@ namespace Logic
 
         }
 
+        Vector2Int[] brickToIndexes(Brick brick)
+        {
+            Vector2Int[] indexes = new Vector2Int[brick.transform.childCount];
+
+            for (int i = 0; i < indexes.Length; i++)
+            {
+                Transform square = brick.transform.GetChild(i);
+                indexes[i] = GetIndexFromPosition(brick.transform.localPosition + brick.transform.rotation * square.localPosition);
+            }
+
+            return indexes;
+        }
+         
         // controls
         public bool MoveBrick(int direction)
         {
 
             if(brick)
             {
+                Vector2Int[] indexes = brickToIndexes(brick);
+
+                foreach (var index in indexes)
+                {
+                    int newX = index.x + direction;
+
+                    if (newX < 0 || newX >= Width)
+                    {
+                        return false;
+                    }
+
+                    if (index.y < Height && table[newX, index.y] == 1)
+                    {
+                        return false;
+                    }
+                }
+
                 brick.GetComponent<Rigidbody2D>().position += new Vector2(direction * CellSize, 0);
                 return true;
             }
@@ -255,12 +352,36 @@ namespace Logic
 
         public bool RotateBrick(int direction)
         {
+            if(direction == 1) { }
+            // TODO: ADD ROTATION: https://tetris.wiki/Super_Rotation_System
+            //if (brick)
+            //{
+            //    var previousRotation = brick.transform.rotation;
+            //    brick.transform.rotation = brick.transform.rotation * Quaternion.Euler(Vector3.forward * 90 * direction);
 
-            if (brick)
-            {
-                brick.GetComponent<Rigidbody2D>().rotation += 90*direction;
-                return true;
-            }
+            //    Vector2Int[] indexes = brickToIndexes(brick);
+
+            //    foreach (var index in indexes)
+            //    {
+            //        int newX = index.x + direction;
+
+            //        if (newX < 0 || newX >= Width)
+            //        {
+            //            brick.transform.rotation = previousRotation;
+            //            return false;
+            //        }
+
+            //        if (index.y < Height && table[newX, index.y] == 1)
+            //        {
+            //            brick.transform.rotation = previousRotation;
+            //            return false;
+            //        }
+            //    }
+
+
+            //    brick.GetComponent<Rigidbody2D>().rotation += 90*direction;
+            //    return true;
+            //}
             return false;
         }
 

@@ -7,7 +7,7 @@ namespace Logic
     public class Brick : MonoBehaviour
     {
 
-        public Action<Brick> OnStopped;
+        public Action OnStopped;
 
         private int[,] table;
 
@@ -23,8 +23,7 @@ namespace Logic
                 // TODO: Fix tunneling
                 return;
             }
-            Debug.Log("kolizja");
-            OnStopped?.Invoke(this);
+            OnStopped?.Invoke();
         }
 
         

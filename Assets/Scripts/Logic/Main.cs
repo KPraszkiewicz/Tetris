@@ -21,9 +21,46 @@ namespace Logic
         public void Start()
         {
             Player1Board.OnPlayerLose += PlayerLose;
+            Player1Board.OnBrickPlaced += Player1Board_OnBrickPlaced;
+            Player2Board.OnBrickPlaced += Player2Board_OnBrickPlaced;
         }
 
-    
+        private void Player1Board_OnBrickPlaced(object sender, Board.EventArgsBrickPlaced e)
+        {
+            var scoreArgs = new EventArgsPlayerData
+            {
+                PlayerId = 1,
+                Value = e.Scores
+            };
+            OnScoreUpdated?.Invoke(this, scoreArgs);
+
+            var nextBrickArgs = new EventArgsPlayerData
+            {
+                PlayerId = 1,
+                Value = e.NextBrick
+            };
+            OnNewNextBrick?.Invoke(this, nextBrickArgs);
+        }
+
+        private void Player2Board_OnBrickPlaced(object sender, Board.EventArgsBrickPlaced e)
+        {
+            var scoreArgs = new EventArgsPlayerData
+            {
+                PlayerId = 2,
+                Value = e.Scores
+            };
+            OnScoreUpdated?.Invoke(this, scoreArgs);
+
+            var nextBrickArgs = new EventArgsPlayerData
+            {
+                PlayerId = 2,
+                Value = e.NextBrick
+            };
+            OnNewNextBrick?.Invoke(this, nextBrickArgs);
+        }
+
+        
+
         public void StartGame()
         {
 

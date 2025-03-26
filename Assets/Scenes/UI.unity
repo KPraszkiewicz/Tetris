@@ -417,7 +417,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2717bd53774ebaf4e924b644b6195a4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gui: {fileID: 947982295}
+  gui: {fileID: 947982300}
   MainMenu: {fileID: 1739414383}
 --- !u!4 &834703183
 Transform:
@@ -528,6 +528,7 @@ GameObject:
   - component: {fileID: 947982298}
   - component: {fileID: 947982297}
   - component: {fileID: 947982296}
+  - component: {fileID: 947982300}
   m_Layer: 5
   m_Name: GUI
   m_TagString: Untagged
@@ -619,6 +620,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &947982300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 947982295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51333cea90a60364facb11656f908c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  p1Score: {fileID: 1371042025}
+  p2Score: {fileID: 2027979130}
 --- !u!1 &1230003478
 GameObject:
   m_ObjectHideFlags: 0

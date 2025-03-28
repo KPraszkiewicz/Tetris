@@ -1,12 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Codice.Client.BaseCommands.BranchExplorer;
-using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
-using UnityEngine.SceneManagement;
+
 
 namespace Logic
 {
@@ -88,7 +83,7 @@ namespace Logic
                     obj.transform.localPosition = GetPositionFromIndex(i, j);
                 }
             }
-            SpawnPoint.transform.localPosition = new Vector3(Width / 2 + 0.5f, Height, -1);
+            SpawnPoint.transform.localPosition = new Vector3(Width / 2 + 0.5f, Height + 2f, -1);
         }
 
         public Vector2Int GetIndexFromPosition(Vector3 position)
@@ -131,6 +126,18 @@ namespace Logic
             brick.OnStopped += PlaceBrick;
             brick.transform.SetParent(transform);
             brick.StartMoving(BrickSpeed);
+
+
+            // Check if spawn in board brick
+            foreach (var index in BrickToIndexes(brick))
+            {
+                if (index.y < Height && table[index.x, index.y] == 1)
+                {
+                    OnPlayerLose?.Invoke(this, EventArgs.Empty);
+                    gameRunning = false;
+                    return;
+                }
+            }
         }
 
         public void DeleteLine(int index)

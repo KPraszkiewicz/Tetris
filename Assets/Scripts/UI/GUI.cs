@@ -1,5 +1,4 @@
 using System;
-using Logic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,7 +26,6 @@ namespace UI
 
         public void SetNextBrick(int playerId, int brickId)
         {
-            Debug.Log(brickId);
             Image imageRef;
             if (playerId == 1)
             {

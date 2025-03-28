@@ -14,7 +14,7 @@ namespace Logic
             public int Value;
         }
 
-        public event Action OnGameEnded;
+        public event Action<int> OnGameEnded;
         public event EventHandler<EventArgsPlayerData> OnScoreUpdated;
         public event EventHandler<EventArgsPlayerData> OnNewNextBrick;
 
@@ -104,14 +104,14 @@ namespace Logic
 
         void Player1Lose(object sender, EventArgs _args)
         {
-            OnGameEnded?.Invoke();
+            OnGameEnded?.Invoke(2);
             Player1Board.EndGame();
             Player2Board.EndGame();
         }
 
         void Player2Lose(object sender, EventArgs _args)
         {
-            OnGameEnded?.Invoke();
+            OnGameEnded?.Invoke(1);
             Player1Board.EndGame();
             Player2Board.EndGame();
         }
@@ -134,17 +134,8 @@ namespace Logic
         }
         private void Awake()
         {
-            if (_instance != null && _instance != this)
-            {
-                Destroy(this.gameObject);
-                return;
-            }
-            else
-            {
-                _instance = this;
-            }
-
-            DontDestroyOnLoad(this.gameObject);
+            Debug.Log("MAIN AWAKE");
+            _instance = this;
         }
 
 

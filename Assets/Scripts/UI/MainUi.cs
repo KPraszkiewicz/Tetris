@@ -1,7 +1,9 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Logic;
+using UnityEngine.SceneManagement;
+using System;
+using TMPro;
 
 namespace UI
 {
@@ -11,13 +13,35 @@ namespace UI
         Main mainLogic;
         [SerializeField] GUI gui;
         [SerializeField] GameObject MainMenu;
+        [SerializeField] GameObject GameResultLabel;
 
         public void StartNewGame()
         {
+            if (!mainLogic)
+            {
+                mainLogic = Main.Instance;
+
+                if (mainLogic == null)
+                {
+                    Debug.LogError("MainLogic is null");
+                    return;
+                }
+
+                mainLogic.OnGameEnded += MainLogic_OnGameEnded;
+                mainLogic.OnScoreUpdated += MainLogic_OnScoreUpdated;
+                mainLogic.OnNewNextBrick += MainLogic_OnNewNextBrick;
+            }
+
             MainMenu.SetActive(false);
             gui.gameObject.SetActive(true);
             gui.ResetGui();
             mainLogic.StartGame();
+        }
+
+        private void MainLogic_OnGameEnded(int playerId)
+        {
+            GameResultLabel.GetComponent<TextMeshProUGUI>().text = String.Format("Wygra³ gracz {0}", playerId);
+            ResetGame();
         }
 
         public void ResetGame()
@@ -27,18 +51,13 @@ namespace UI
 
         private void Awake()
         {
-            _playersInput = new PlayersInput();
-            mainLogic = Main.Instance;
-
-            if (mainLogic == null)
+            if(SceneManager.sceneCount < 2)
             {
-                Debug.LogError("MainLogic is null");
-                return;
+                SceneManager.LoadScene("TetrisBoard", LoadSceneMode.Additive);
             }
-
-            mainLogic.OnGameEnded += ResetGame;
-            mainLogic.OnScoreUpdated += MainLogic_OnScoreUpdated;
-            mainLogic.OnNewNextBrick += MainLogic_OnNewNextBrick;
+            
+            _playersInput = new PlayersInput();
+            GameResultLabel.GetComponent<TextMeshProUGUI>().text = String.Format("");
         }
 
         private void MainLogic_OnNewNextBrick(object sender, Main.EventArgsPlayerData e)

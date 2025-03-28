@@ -12,15 +12,15 @@ namespace Logic
 {
     public class Board : MonoBehaviour
     {
-        public GameObject Square;
-        public GameObject SquareContainer;
-        public GameObject BoardBackground;
-        public GameObject SpawnPoint;
+        [SerializeField] GameObject Square;
+        [SerializeField] GameObject SquareContainer;
+        [SerializeField] GameObject BoardBackground;
+        [SerializeField] GameObject SpawnPoint;
 
-        public Brick[] BrickVariats;
+        [SerializeField] Brick[] BrickVariats;
 
-        public Brick brick;
-        public Brick NextBrick;
+        Brick brick;
+        public int NextBrick = -1;
         public int Score = 0;
 
         public int Width = 10;
@@ -30,7 +30,7 @@ namespace Logic
 
         private int[,] table;
 
-        bool gameRunning = true;
+        public bool gameRunning = true;
 
         public struct EventArgsBrickPlaced
         {
@@ -43,42 +43,39 @@ namespace Logic
 
         private void Start()
         {
+            ResetBoard();
+        }
+
+        public void RunBoard()
+        {
+            ResetBoard();
+            GenNextBrick();
+            SpawnBrick();
+            GenNextBrick();
+
+        }
+
+        public void ResetBoard()
+        {
             InitTable();
-
-            // pseudo unit tests
-
-            table[0, 0] = 1;
-            table[0, 1] = 1;
-            table[0, 2] = 1;
-            table[0, 3] = 1;
-            table[0, 4] = 1;
-            table[0, 5] = 1;
-            table[0, 6] = 1;
-            table[0, 7] = 1;
-            table[0, 8] = 1;
-            table[0, 9] = 1;
-
-            table[1, 4] = 1;
-            table[1, 5] = 1;
-            table[1, 6] = 1;
-            table[1, 7] = 1;
-
-            for (int i = 0; i < 10; i++)
-            {
-                table[i, 0] = 1;
-            }
-            for (int i = 0; i < 10; i++)
-            {
-                table[i, 1] = 1;
-            }
-            CheckLines();
-
             UpdateCells();
+            GenNextBrick();
+            Score = 0;
+            gameRunning = true;
+        }
+
+        public void EndGame()
+        {
+            if (brick)
+            {
+                Destroy(brick.gameObject);
+            }
+            gameRunning = false;
         }
 
         public void InitTable()
         {
-            BoardBackground.transform.localScale = new Vector3(Width, Height + 2*CellSize, 1);
+            BoardBackground.transform.localScale = new Vector3(Width, Height, 1);
             table = new int[Width, Height];
             for (int j = 0; j < Height; j++)
             {
@@ -92,11 +89,6 @@ namespace Logic
                 }
             }
             SpawnPoint.transform.localPosition = new Vector3(Width / 2 + 0.5f, Height, -1);
-        }
-        public static Vector3 RoundPosition(Vector3 position)
-        {
-            Vector3 newPosition = new Vector3(Mathf.Round(position.x), Mathf.Round(position.y), position.z);
-            return newPosition;
         }
 
         public Vector2Int GetIndexFromPosition(Vector3 position)
@@ -125,27 +117,20 @@ namespace Logic
             }
         }
 
-        public void AddSquare(Vector2 position)
+        public void GenNextBrick()
         {
-            Vector2Int index = GetIndexFromPosition(position);
-            table[index.x, index.y] = 1;
+            NextBrick = UnityEngine.Random.Range(0, BrickVariats.Length);
         }
 
-        public int SpawnBrick()
+        public void SpawnBrick()
         {
             if (!gameRunning)
-                return 0;
+                return;
 
-            Debug.Log("SPAWN");
-            int brickVariant = UnityEngine.Random.Range(0, BrickVariats.Length);
-
-            Brick newBrick = Instantiate(BrickVariats[brickVariant], SpawnPoint.transform.position, Quaternion.identity);
-            newBrick.OnStopped += PlaceBrick;
-            newBrick.transform.SetParent(transform);
-            newBrick.StartMoving(BrickSpeed);
-            brick = newBrick;
-
-            return brickVariant;
+            brick = Instantiate(BrickVariats[NextBrick], SpawnPoint.transform.position, Quaternion.identity);
+            brick.OnStopped += PlaceBrick;
+            brick.transform.SetParent(transform);
+            brick.StartMoving(BrickSpeed);
         }
 
         public void DeleteLine(int index)
@@ -203,7 +188,7 @@ namespace Logic
                     DeleteLine(j);
                 }
             }
-            // TODOL wait 100 ms
+            // TODO: wait 100 ms
 
             for (int j = 0; j < Height; j++)
             {
@@ -229,7 +214,6 @@ namespace Logic
                 }
             }
 
-
             if (deletedLines > 0)
             {
                 UpdateCells();
@@ -239,10 +223,9 @@ namespace Logic
 
         public void PlaceBrick()
         {
-            int scoreBefore = Score;
             bool canBePlaced = false;
 
-            Vector2Int[] indexes = brickToIndexes(brick);
+            Vector2Int[] indexes = BrickToIndexes(brick);
 
             int minHeight = Height;
             int minX = Width;
@@ -283,7 +266,6 @@ namespace Logic
                 {
                     OnPlayerLose?.Invoke(this, EventArgs.Empty);
                     gameRunning = false;
-                    Debug.Log("Gracz przegra³");
                     return;
                 }
                 else
@@ -294,21 +276,24 @@ namespace Logic
 
             CheckLines();
             UpdateCells();
+
             brick.gameObject.SetActive(false);
             brick.OnStopped -= PlaceBrick;
             Destroy(brick.gameObject);
 
+            SpawnBrick();
+            GenNextBrick();
+
             EventArgsBrickPlaced args = new()
             {
-                Scores = Score - scoreBefore,
-                NextBrick = SpawnBrick()
+                Scores = Score,
+                NextBrick = NextBrick
             };
 
             OnBrickPlaced?.Invoke(this, args);
-
         }
 
-        Vector2Int[] brickToIndexes(Brick brick)
+        Vector2Int[] BrickToIndexes(Brick brick)
         {
             Vector2Int[] indexes = new Vector2Int[brick.transform.childCount];
 
@@ -324,10 +309,9 @@ namespace Logic
         // controls
         public bool MoveBrick(int direction)
         {
-
             if(brick)
             {
-                Vector2Int[] indexes = brickToIndexes(brick);
+                Vector2Int[] indexes = BrickToIndexes(brick);
 
                 foreach (var index in indexes)
                 {

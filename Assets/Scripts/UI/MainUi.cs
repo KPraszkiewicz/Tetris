@@ -12,23 +12,16 @@ namespace UI
         [SerializeField] GUI gui;
         [SerializeField] GameObject MainMenu;
 
-        //public event Action<InputAction.CallbackContext> OnP1Move;
-        //public event Action<InputAction.CallbackContext> OnP1Rotate;
-        //public event Action<InputAction.CallbackContext> OnP2Move;
-        //public event Action<InputAction.CallbackContext> OnP2Rotate;
-
         public void StartNewGame()
         {
             MainMenu.SetActive(false);
             gui.gameObject.SetActive(true);
+            gui.ResetGui();
             mainLogic.StartGame();
-
         }
 
         public void ResetGame()
         {
-            //gui.reset();
-            gui.gameObject.SetActive(false);
             MainMenu.SetActive(true);
         }    
 
@@ -45,6 +38,12 @@ namespace UI
 
             mainLogic.OnGameEnded += ResetGame;
             mainLogic.OnScoreUpdated += MainLogic_OnScoreUpdated;
+            mainLogic.OnNewNextBrick += MainLogic_OnNewNextBrick;
+        }
+
+        private void MainLogic_OnNewNextBrick(object sender, Main.EventArgsPlayerData e)
+        {
+            gui.SetNextBrick(e.PlayerId, e.Value);
         }
 
         private void MainLogic_OnScoreUpdated(object sender, Main.EventArgsPlayerData e)

@@ -5,8 +5,8 @@ namespace Logic
 {
     public class Main : MonoBehaviour
     {
-        public Board Player1Board;
-        public Board Player2Board;
+        [SerializeField] Board Player1Board;
+        [SerializeField] Board Player2Board;
 
         public struct EventArgsPlayerData
         {
@@ -20,7 +20,8 @@ namespace Logic
 
         public void Start()
         {
-            Player1Board.OnPlayerLose += PlayerLose;
+            Player1Board.OnPlayerLose += Player1Lose;
+            Player2Board.OnPlayerLose += Player2Lose;
             Player1Board.OnBrickPlaced += Player1Board_OnBrickPlaced;
             Player2Board.OnBrickPlaced += Player2Board_OnBrickPlaced;
         }
@@ -63,8 +64,22 @@ namespace Logic
 
         public void StartGame()
         {
+            Player1Board.RunBoard();
+            Player2Board.RunBoard();
 
-            Player1Board.SpawnBrick();
+            var nextBrickArgs1 = new EventArgsPlayerData
+            {
+                PlayerId = 1,
+                Value = Player1Board.NextBrick
+            };
+            OnNewNextBrick?.Invoke(this, nextBrickArgs1);
+
+            var nextBrickArgs2 = new EventArgsPlayerData
+            {
+                PlayerId = 2,
+                Value = Player2Board.NextBrick
+            };
+            OnNewNextBrick?.Invoke(this, nextBrickArgs2);
         }
 
         public void OnP1Move(int direction)
@@ -87,12 +102,19 @@ namespace Logic
             Player2Board.RotateBrick(direction);
         }
 
-        void PlayerLose(object sender, EventArgs _args)
+        void Player1Lose(object sender, EventArgs _args)
         {
             OnGameEnded?.Invoke();
+            Player1Board.EndGame();
+            Player2Board.EndGame();
         }
 
-
+        void Player2Lose(object sender, EventArgs _args)
+        {
+            OnGameEnded?.Invoke();
+            Player1Board.EndGame();
+            Player2Board.EndGame();
+        }
 
 
 
